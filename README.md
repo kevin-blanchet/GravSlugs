@@ -1,15 +1,39 @@
 # GravSlugs
- 
-## Install
 
-- Clone git GravSlugs
-- Run setup.bat
-- Run build/GravSlugs.sln
-- Set GravSlugs as startup project
+- License GNU GPL-3.0 
 
-## Build
+## SETUP
 
-- Run build.bat (run a second time if it's the first use to avoid missing dll problems)
+1. Clone project : 
+```
+     git clone --recurse-submodules https://github.com/kevin-blanchet/GravSlugs.git 
+```
+
+2. Install vcpkg : [^1] 
+```
+    ./Dependencies/vcpkg/bootstrap-vcpkg.sh
+```
+```
+    ./Dependencies/vcpkg/bootstrap-vcpkg.bat
+```
+
+3. Install vcpkg modules : [^2]
+```
+    ./Dependencies/vcpkg/vcpkg install
+```
+
+4. Build project : [^3]
+```
+    cmake -B build
+```
+
+## OTHERS
+
+Notes : 
+
+Pour le moment fonctionne mais tout en static lib. \
+Faire les changements du CMake pour fonctionnement en dynamic lib. 
+
 
 ## About
 
@@ -25,8 +49,13 @@ The bulk of the game will be a worms-like gamelay.
 
 ## Credits
 
-CMake and startup files taken from https://github.com/SunvyWasTaken/ProjectPathfinder
+CMakeFiles.txt inspired by https://github.com/Nimeryon/WarTurtles.git
 
 Project rules created by Lavigne Quentin and Oukrat Remi
 
 Game created by Carricart Hugo, Pradel Hugo and Blanchet Kevin
+
+
+[^1]: A executer depuis le terminal Git [Git bash here]
+[^2]: A executer depuis le terminal Git [Git bash here]
+[^3]: Assurez vous de bien avoir CMake dans le PATH Windows
