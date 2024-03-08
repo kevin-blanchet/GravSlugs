@@ -6,7 +6,7 @@
 
 #include "snpch.h"
 
-namespace GravEngine
+namespace grav
 {
 
 	void print_hello(void);
