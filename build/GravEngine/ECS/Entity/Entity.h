@@ -5,12 +5,24 @@
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
 
+#include "../../ComponentTypesList.h"
+
 #include "snpch.h"
 
-// Type alias
-using Entity = std::uint32_t;
+namespace grav {
 
-// Define a maximum number of entity for optimisation purposes
-const Entity MAX_ENTITY_COUNT = 5000;
+class Component;
+
+template <typename... ComponentTypes>
+struct Entity {
+	using EntityComponentsTypes = ComponentTypeList<ComponentTypes...>;
+
+	Entity(ComponentTypeList<ComponentTypes...>) {}
+	virtual ~Entity() {};
+
+	std::vector<Component*> _components;
+};
+
+}
 
 #endif // !__ENTITY_H__

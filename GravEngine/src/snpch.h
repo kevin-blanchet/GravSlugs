@@ -15,6 +15,7 @@
 #include <map>
 #include <filesystem>
 #include <assert.h>
+#include <stdexcept>
 
 #include <thread>
 #include <mutex>

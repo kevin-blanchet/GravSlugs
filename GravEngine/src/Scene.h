@@ -5,7 +5,6 @@
 namespace grav{
 
 class System;
-class Entity;
 
 struct Scene {
 	Scene();
@@ -24,14 +23,14 @@ struct Scene {
 
 protected:
 	std::map<char*, System> _systems;
-	std::vector<Entity> _entities;
+
 };
 
 
 template<typename EntityType>
 inline void Scene::addEntity()
 {
-	_entities.push_back(EntityType());
+
 }
 
 template<typename systemType>
@@ -39,7 +38,7 @@ inline systemType Scene::registerSystem()
 {
 	systemType system = _systems.find(systemType::SystemName);
 	if (system == _systems.end()) {
-		_systems[systemType::SystemName] = systemType();
+		_systems[systemType::SystemName] = systemName();
 		system = _systems[systemType::SystemName];
 	}
 	return system;
@@ -50,7 +49,7 @@ inline systemType Scene::getSystem()
 {
 	systemType system = _systems.find(systemType::SystemName);
 	if (system == _systems.end()) {
-		throw std::invalid_argument("System does not exist in this scene");
+		throw Error("System does not exist in this scene");
 	}
 
 	return system;

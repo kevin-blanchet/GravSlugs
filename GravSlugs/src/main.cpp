@@ -10,5 +10,5 @@
 
 int main()
 {
-	GravEngine::print_hello();
+	grav::print_hello();
 }

@@ -1,7 +1,10 @@
 #include "GravEngine.h"
 
+namespace grav {
 
-void GravEngine::print_hello(void)
+void print_hello(void)
 {
 	std::cout << "Hello !" << std::endl;
+}
+
 }

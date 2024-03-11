@@ -5,6 +5,10 @@
 
 namespace grav {
 
+Clock::Clock()
+{
+}
+
 float Clock_SFML::getDelta()
 {
 	return p_clock.get()->getElapsedTime().asSeconds();
