@@ -11,6 +11,8 @@ namespace grav
 
 	void print_hello(void);
 
+	void start_engine();
+
 }
 
 #endif /* __GRAV_ENGINE_H__ */

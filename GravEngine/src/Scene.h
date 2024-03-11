@@ -32,7 +32,7 @@ protected:
 template<typename systemType>
 inline systemType& Scene::registerSystem()
 {
-	auto system = _systems.find(systemType::SystemName);
+	systemType* system = _systems.find(systemType::SystemName);
 	if (system == _systems.end()) {
 		system = new systemType(*this);
 		_systems[systemType::SystemName] = system;
