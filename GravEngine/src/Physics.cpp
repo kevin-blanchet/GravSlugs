@@ -1,10 +1,12 @@
+#include "Physics.h"
+
 #include <iostream>
 #include <cmath>
 #include <SFML/Graphics.hpp>
 
-#include "Physics.h"
 
-void ResolveCollision(Manifold* m) {
+void ResolveCollision(Manifold* m) 
+{
 
     //Impulse
     Object* A = m->A;
@@ -28,7 +30,8 @@ void ResolveCollision(Manifold* m) {
     B->velocity += B->inv_mass * impulse;
 }
 
-bool Circle_Collision(Manifold* m) {
+bool Circle_Collision(Manifold* m) 
+{
     Object* c1 = m->A;
     Object* c2 = m->B;
 
@@ -60,7 +63,8 @@ bool Circle_Collision(Manifold* m) {
     }
 }
 
-bool Rectangle_Collision(Manifold* m) {
+bool Rectangle_Collision(Manifold* m) 
+{
     Object* r1 = m->A;
     Object* r2 = m->B;
 
@@ -114,7 +118,8 @@ bool Rectangle_Collision(Manifold* m) {
     return(false);
 }
 
-bool RectangleCircle_Collision(Manifold* m) {
+bool RectangleCircle_Collision(Manifold* m)
+{
     Object* r = m->A;
     Object* c = m->B;
 

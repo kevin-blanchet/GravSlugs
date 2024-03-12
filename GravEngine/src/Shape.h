@@ -1,11 +1,12 @@
 #pragma once
+
+#include "Vector2.h"
+
 #include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
-#include <Vector2.h>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 using CircleShape = sf::CircleShape;
 using RectanlgeShape = sf::RectangleShape;
-
 
 enum ShapeType
 {
@@ -33,23 +34,25 @@ private:
 
 public:
     Circle() { type = CIRCLE; }
-    Circle(const float radius) { type = CIRCLE; m_radius = radius };
+    Circle(const float radius) { type = CIRCLE; m_radius = radius; };
 
-    void SetRadius(const float radius) { m_radius = radius };
-    void SetCenter(const Vector2i center) { m_center = center };
+    void SetRadius(const float radius) { m_radius = radius; };
+    void SetCenter(const Vector2i center) { m_center = center; };
 
-    Vector2i GetCenter() const { return m_center };
-    float GetRadius() const { return m_radius };
+    Vector2i GetCenter() const { return m_center; };
+    float GetRadius() const { return m_radius; };
 };
 
-class Rectangle : public PhysicsShape
+class Rectangle : public PhysicShape
 {
 private:
     Vector2i halfExtent;
+
 public:
     Rectangle();
-    Rectangle(const Vector2i& origin, const Vector2i& halfExtent); /
-        float GetHeight()const;
+    Rectangle(const Vector2i& origin, const Vector2i& halfExtent); 
+
+    float GetHeight()const;
     float GetWidth() const;
     Vector2i GetMin() const;
     Vector2i GetMax() const;

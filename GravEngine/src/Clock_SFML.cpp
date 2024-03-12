@@ -3,7 +3,7 @@
 
 #include <SFML/System/Clock.hpp>
 
-namespace grav {
+using namespace grav;
 
 float Clock_SFML::getDelta()
 {
@@ -23,6 +23,4 @@ float Clock_SFML::resetDelta()
 Int64 Clock_SFML::uResetDelta()
 {
 	return p_clock.get()->restart().asMicroseconds();
-}
-
 }

@@ -2,6 +2,7 @@
 #define __SCENE_H__
 
 #include "snpch.h"
+
 namespace grav{
 
 struct System;

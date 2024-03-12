@@ -4,8 +4,8 @@ class Object;
 
 struct Manifold
 {
-    Object* A;
-    Object* B;
+    Object *A;
+    Object *B;
 
     float penetration;
     sf::Vector2f normal;
