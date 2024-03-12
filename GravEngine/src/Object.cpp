@@ -28,3 +28,20 @@ void Object::Update()
 {
 
 }
+
+void Object::applyImpulse()
+{
+    if (shape) {
+
+        Vector2i impulsePerMass = impulse / getMass();
+
+        velocity += impulsePerMass;
+
+        // Calculate the angular velocity change based on the impulse and contact point
+        float torque = Vector2i::Cross(contact - position, impulse);
+        float angularImpulse = torque / getInertia();
+
+        // Update the angular velocity of the object
+        m_angularVelocity += angularImpulse;
+    }
+}

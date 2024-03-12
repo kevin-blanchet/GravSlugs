@@ -2,7 +2,7 @@
 #define __SCENE_H__
 
 #include "snpch.h"
-
+#include "Physics.h"
 namespace grav{
 
 struct System;
@@ -14,6 +14,7 @@ struct Scene {
 	void load();
 	bool update();
 	void addEntity();
+	void HandleCollisions();
 
 	template<typename systemType>
 	systemType& registerSystem();
@@ -27,6 +28,7 @@ struct Scene {
 protected:
 	std::map<char*, System*> _systems;
 	std::vector<Entity*> _entities;
+	std::vector<Object*> _objects;
 };
 
 

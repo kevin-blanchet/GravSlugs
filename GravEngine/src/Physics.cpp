@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <cmath>
+#include<algorithm>
 #include <SFML/Graphics.hpp>
 
 
@@ -12,9 +13,9 @@ void ResolveCollision(Manifold* m)
     Object* A = m->A;
     Object* B = m->B;
 
-    //Velovité relative 
-    Vector2i relVelo = B->velocity - A->velocity;
-    //Vélocité par rapport à la normale
+    //Velovitï¿½ relative 
+    Vector2 relVelo = B->velocity - A->velocity;
+    //Vï¿½locitï¿½ par rapport ï¿½ la normale
     float velNormal = dotProduct(relVelo, m->normal);
 
     if (velNormal > 0) {
@@ -25,13 +26,51 @@ void ResolveCollision(Manifold* m)
     float e = fminf(A->restitution, B->restitution);
     float j = (-(1 + e) * velNormal) / (A->inv_mass + B->inv_mass);
 
-    Vector2i impulse = j * m->normal;
+    Vector2 impulse = j * m->normal;
     A->velocity -= A->inv_mass * impulse;
     B->velocity += B->inv_mass * impulse;
 }
 
-bool Circle_Collision(Manifold* m) 
+bool CheckCollisions(Manifold* m)
 {
+    Object* obj1 = m->A;
+    Object* obj2 = m->B;
+
+    if (obj1->shape && obj2->shape) 
+    {
+        // Check collision based on the types of shapes
+        ShapeType shapeType1 = obj1->shape->GetType();
+        ShapeType shapeType2 = obj2->shape->GetType();
+
+        if (shapeType1 == CIRCLE && shapeType2 == CIRCLE) 
+        {
+            return Circle_Collision(m);
+        }
+        else if (shapeType1 == RECTANGLE && shapeType2 == RECTANGLE) 
+        {
+            return Rectangle_Collision(m);
+        }
+        else if (shapeType1 == CIRCLE && shapeType2 == RECTANGLE) 
+        {
+            // Reverse the order for circle-rectangle collision
+            m->A = obj2;
+            m->B = obj1;
+            return RectangleCircle_Collision(m);
+        }
+        else if (shapeType1 == RECTANGLE && shapeType2 == CIRCLE) 
+        {
+
+            return RectangleCircle_Collision(m);
+        }
+    }
+
+    if()
+    return false;
+}
+
+bool Circle_Collision(Manifold* m) {
+
+    //Get Infos from manifold
     Object* c1 = m->A;
     Object* c2 = m->B;
 
@@ -41,13 +80,16 @@ bool Circle_Collision(Manifold* m)
     float radiusLength = c1Shape->radius + c2Shape->radius;
     float squareRadius = powf(radiusLength, 2);
 
+    //check if the 2 circles collides
     if (squareRadius < powf((c1Shape->center.x - c2Shape->center.x), 2) + powf((c1Shape->center.y - c2Shape->center.y), 2)) {
         return(false);
     }
 
-    sf::Vector2f n = c2Shape->center - c1Shape->center;
+    //Resolve the Collision
+    Vector2 n = c2Shape->center - c1Shape->center;
     float d = sqrtf(powf(n.x, 2) + powf(n.y, 2));
 
+    //Circles are not at the same position
     if (d != 0) {
         m->penetration = radiusLength - d;
         m->normal = n / d;
@@ -57,7 +99,7 @@ bool Circle_Collision(Manifold* m)
 
     else {
         m->penetration = radiusLength;
-        m->normal = sf::Vector2f(1.0f, 0.f);
+        m->normal = Vector2(1.0f, 0.f);
 
         return(true);
     }
@@ -68,108 +110,85 @@ bool Rectangle_Collision(Manifold* m)
     Object* r1 = m->A;
     Object* r2 = m->B;
 
-    AABB* r1Shape = &(r1->rectangleObject);
-    AABB* r2Shape = &(r2->rectangleObject);
+    Rectangle* r1Shape = &(r1->rectangleObject);
+    Rectangle* r2Shape = &(r2->rectangleObject);
 
-    float r1HalfX = (r1Shape->maxCoords.x - r1Shape->minCoords.x) / 2.f;
-    float r2HalfX = (r2Shape->maxCoords.x - r2Shape->minCoords.x) / 2.f;
+    //Calcul of the x-axis overlap 
+    float r1HalfX = (r1Shape->GetMax().x - r1Shape->GetMin().x) / 2.f;
+    float r2HalfX = (r2Shape->GetMax().x - r2Shape->GetMin().x) / 2.f;
 
-    sf::Vector2f relPos = r2->pos - r1->pos;
+    Vector2 relPos = r2->pos - r1->pos;
 
-    float xOverleap = r1HalfX + r2HalfX - abs(relPos.x + r2HalfX - r1HalfX);
+    float xOverlap = r1HalfX + r2HalfX - abs(relPos.x + r2HalfX - r1HalfX);
 
-    if (xOverleap > 0) {
-        float r1HalfY = (r1Shape->maxCoords.y - r1Shape->minCoords.y) / 2.f;
-        float r2HalfY = (r2Shape->maxCoords.y - r2Shape->minCoords.y) / 2.f;
+    if (xOverlap > 0) 
+    {
+        //Calcul of the y-axis overlap
+        float r1HalfY = (r1Shape->GetMax().y - r1Shape->GetMin().y) / 2.f;
+        float r2HalfY = (r2Shape->GetMax().y - r2Shape->GetMin().y) / 2.f;
 
-        float yOverleap = r1HalfY + r2HalfY - abs(relPos.y + r2HalfY - r1HalfY);
+        float yOverlap = r1HalfY + r2HalfY - abs(relPos.y + r2HalfY - r1HalfY);
 
-        if (yOverleap > 0) {
-            if (xOverleap < yOverleap) {
-                m->penetration = xOverleap;
+        if (yOverlap > 0) 
+        {
+            // Determine the minimum overlap and set penetration depth
+            m->penetration = (xOverlap < yOverlap) ? xOverlap : yOverlap;
 
-                if (relPos.x > 0) {
-                    m->normal = sf::Vector2f(1.f, 0.f);
-                }
-
-                else {
-                    m->normal = sf::Vector2f(-1.f, 0.f);
-                }
-
-                return(true);
+            if (xOverleap < yOverleap) 
+            {
+                if (relPos.x > 0)
+                    m->normal = Vector2(1.f, 0.f);
+                
+                else 
+                    m->normal = Vector2(-1.f, 0.f);
             }
-
             else {
-                m->penetration = yOverleap;
-
-                if (relPos.y > 0) {
-                    m->normal = sf::Vector2f(0.f, 1.f);
-                }
-
-                else {
-                    m->normal = sf::Vector2f(0.f, -1.f);
-                }
-
-                return(true);
+                if (relPos.y > 0)
+                    m->normal = Vector2(0.f, 1.f);
+                
+                else 
+                    m->normal = Vector2(0.f, -1.f);
+                
             }
+
+            return(true);
+            
         }
     }
 
     return(false);
 }
 
-bool RectangleCircle_Collision(Manifold* m)
-{
+bool RectangleCircle_Collision(Manifold* m) {
+
     Object* r = m->A;
     Object* c = m->B;
 
-    AABB* rShape = &(r->rectangleObject);
-    circle* cShape = &(c->circleObject);
+    Rectangle* rShape = dynamic_cast<Rectangle*>(r->shape);
+    Circle* cShape = dynamic_cast<Circle*>(c->shape);
 
-    float rad = cShape->radius;
+    if (cShape && rShape)
+    {
+        // Calculate circle center in the coordinate system of the rectangle
+        Vector2i circleCenterInRectSpace = c->position - r->position;
 
-    float xHalf = (rShape->maxCoords.x - rShape->minCoords.x) / 2.f;
-    float yHalf = (rShape->maxCoords.y - rShape->minCoords.y) / 2.f;
+        // Closest point on the rectangle to the circle
+        Vector2i closestPoint = std::clamp(circleCenterInRectSpace, rShape->GetMin(), rShape->GetMax());
 
-    sf::Vector2f relPos = (c->pos + sf::Vector2f(rad, rad)) - (r->pos + sf::Vector2f(xHalf, yHalf));
-    sf::Vector2f closest = relPos;
+        // Calculate the vector from the circle center to the closest point
+        Vector2i circleToClosest = circleCenterInRectSpace - closestPoint;
 
-    closest.x = clamp(-xHalf, xHalf, closest.x);
-    closest.y = clamp(-yHalf, yHalf, closest.y);
+        float distanceSquared = static_cast<float>(circleToClosest.Dot(circleToClosest));
 
-    bool isInside = false;
+        // Check for collision
+        if (distanceSquared <= powf(cShape->GetRadius(), 2))
+        {
+            float distance = sqrtf(distanceSquared);
+            m->penetration = cShape->GetRadius() - distance;
+            m->normal = (distance > 0) ? circleToClosest / distance : Vector2i(0.f, 1.f);
 
-    if (closest == relPos) {
-        isInside = true;
-
-        if (abs(closest.x) > abs(closest.y)) {
-            closest.x = copysignf(xHalf, closest.x);
+            return true;
         }
-
-        else {
-            closest.y = copysignf(yHalf, closest.y);
-        }
     }
-
-    sf::Vector2f n = relPos - closest;
-    float d = powf(n.x, 2.f) + powf(n.y, 2.f);
-
-    if (d > rad * rad && !isInside) {
-        return(false);
-    }
-
-    d = sqrtf(d);
-
-    if (isInside) {
-        m->normal = -n / d;
-    }
-
-    else {
-        m->normal = n / d;
-    }
-
-    m->penetration = rad - d;
-
-    return(true);
 }
 
