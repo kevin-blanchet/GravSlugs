@@ -6,7 +6,7 @@
 
 1. Clone project : 
 ```
-     git clone --recurse-submodules https://github.com/kevin-blanchet/GravSlugs.git 
+     git clone --recurse-submodules https://github.com/kevin-blanchet/GravSlugs.git -b kevin GravSlugs
 ```
 
 2. Install vcpkg : [^1] 
